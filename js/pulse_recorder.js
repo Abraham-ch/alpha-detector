@@ -389,10 +389,17 @@ function streamCallback(stream) {
   }
 }
 
-navigator.mediaDevices
-  .getUserMedia(constraints)
-  .then(streamCallback)
-  .catch(errorCallback);
+document.getElementById("startButton").addEventListener("click", function() { 
+  audioCtx.resume().then(() => {
+    console.log('AudioContext iniciado por el usuario');
+    webAudioTouchUnlock(audioCtx); 
+    
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(streamCallback)
+      .catch(errorCallback); 
+  });
+});
 
 document.getElementById("saveData").addEventListener("click", function(e) {
     // save messagepack object as binary blob it

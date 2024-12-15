@@ -17,6 +17,7 @@ canvas {
     margin: 5px;
     padding: 10px;
     font-size: large;
+    background-color: #1a1a1a;
 }
 .main {
     width: 97%;
@@ -66,7 +67,13 @@ canvas {
   float: center;*/
 }
 .triggerButton {
+  cursor: pointer;
+  display: grid;
+  flex-direction: row;
+  justify-content: center;
   font-size: large;
+  place-items: center;
+  place-content: center;
   text-align: center;
   vertical-align: middle;
   color: black;
@@ -77,8 +84,8 @@ canvas {
   display: inline-block;
   border: none;
   padding: 10px;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   margin-top: 0px;
   margin-right: 5px;
   float: center;
