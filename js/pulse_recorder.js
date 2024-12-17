@@ -1,3 +1,35 @@
+function showRadiationAlert() {
+    // Primero, verificamos si ya existe un toast
+    var existingToast = document.getElementById('radiation-alert-toast');
+    if (existingToast) {
+        return; // Si ya existe, no creamos otro
+    }
+
+    // Crear el elemento del toast
+    var toast = document.createElement('div');
+    toast.id = 'radiation-alert-toast';
+    toast.style.position = 'fixed';
+    toast.style.top = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = 'red';
+    toast.style.color = 'white';
+    toast.style.padding = '15px';
+    toast.style.borderRadius = '5px';
+    toast.style.zIndex = '1000';
+    toast.style.fontWeight = 'bold';
+    toast.style.fontFamily = 'sans-serif';
+    toast.style.charset = 'UTF-8';
+    toast.innerHTML = '&#161;ADVERTENCIA! Dosis m&#225;xima de 10KGrey excedida!';
+
+    // Añadir el toast al cuerpo del documento
+    document.body.appendChild(toast);
+
+    setTimeout(function() {
+        document.body.removeChild(toast);
+    }, 5000); // El toast desaparece después de 5 segundos
+}
+
 function webAudioTouchUnlock(context) {
   return new Promise(function(resolve, reject) {
     if (context.state === "suspended" && "ontouchstart" in window) {
@@ -137,7 +169,7 @@ class Oscilloscope {
     //this.x_scale=x_scale
     //this.width=length
     this.n_samples=length
-    document.getElementById("rate").innerHTML = "sampling:<br> " + this.analyser.fftSize + "@"+ this.rate/1000 + " kHz";
+    document.getElementById("rate").innerHTML = "Frecuencia <br> de muestreo:<br> " + this.analyser.fftSize + "@"+ this.rate/1000 + " kHz";
 
   }
   
@@ -292,10 +324,22 @@ class Oscilloscope {
   }
 }
 
-// shim
-//navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
-//                         navigator.mozGetUserMedia || navigator.msGetUserMedia ||
-//                         navigator.mediaDevices.getUserMedia
+Oscilloscope.prototype.update_stats = function() {
+    document.getElementById("stats_total").innerHTML = " " + this.waveforms;
+    if (this.mode == "alpha") {
+        document.getElementById("stats_ae").innerHTML =
+            "&nbsp;e&#8315;: " +
+            this.electrons +
+            "&emsp;&emsp;&emsp;   &alpha;: " +
+            this.alphas;
+        
+        // Añadir alerta cuando se superen las partículas alfa
+        if (this.alphas >= 9940000000) {
+            // Llamar a la función de alerta fuera del contexto de la clase
+            showRadiationAlert();
+        }
+    }
+};
 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioCtx = new AudioContext({  sampleRate: 48000}); 
@@ -343,10 +387,10 @@ var ctx = canvas.getContext("2d");
 ctx.lineWidth = 2;
 ctx.font = "20px monospace";
 ctx.fillStyle = "orange";
-ctx.fillText("Waiting for audio input... please allow microphone usage.", 80, 160);
-ctx.fillText("Try different microphone input volume settings if available.", 80, 190);
-ctx.fillText("Hit the 'reset' button if waveforms do not appear automatically.", 80, 220);
-ctx.strokeStyle = "#ffffff";
+ctx.fillText("Esperando entrada de audio... por favor permita el uso del microfono.", 80, 160);
+ctx.fillText("Pruebe diferentes configuraciones de volumen de entrada del microfono si estan disponibles.", 80, 190);
+ctx.fillText("Presione el boton 'reiniciar' si las formas de onda no aparecen automaticamente.", 80, 220);
+ctx.strokeStyle = "#ffffff"; 
 
 
 // get user microphone
@@ -382,7 +426,7 @@ function streamCallback(stream) {
 
 
   if (scope.mode == "electron") {
-    document.getElementById("stats_ae").style.display = "none"; //disable alpha/electron counter
+    document.getElementById("stats_ae").style.display = "none"; //desactivar alpha/electron contador
     scope.setScale(256, 8)
     document.getElementById('mode').options[0].selected = 'selected';
     document.getElementById("saveData").style.display = "none";
