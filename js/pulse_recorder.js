@@ -334,7 +334,7 @@ Oscilloscope.prototype.update_stats = function() {
             this.alphas;
         
         // Añadir alerta cuando se superen las partículas alfa
-        if (this.alphas >= 9940000000) {
+        if (this.alphas >= 500) {
             // Llamar a la función de alerta fuera del contexto de la clase
             showRadiationAlert();
         }
